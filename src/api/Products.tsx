@@ -14,9 +14,7 @@ export async function fetchAllProducts():Promise<Product[]>{
     }
 }
 
-
 // UNFINISHED
-
 
 export async function addProduct(product:Product){
     try{

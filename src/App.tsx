@@ -7,7 +7,7 @@ import AddProduct from './components/Product/AddProduct'
 
 function App() {
 
-  const [openAddProductForm, setOpenAddProductForm] = useState(true);
+  const [openAddProductForm, setOpenAddProductForm] = useState(false);
 
   // TODO: TS issues to be sorted
   const { products } = useProductContext();

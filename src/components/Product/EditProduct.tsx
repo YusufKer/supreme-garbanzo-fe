@@ -1,5 +1,7 @@
 import { useState, useRef, FormEvent } from "react"
 import { Product } from "../../api/Products"
+import { addProduct } from "../../api/Products"
+import { useProductContext } from "../../context/ProductsContext"
 
 type Props  = {
     toggle: () => void
@@ -12,7 +14,11 @@ type NewInput = {
 
 export default function EditProduct({toggle, sku, attributes}:Props){
 
-    const [newAttributes, setNewAttributes] = useState<NewInput[]>([])
+    const [loading,setLoading] = useState(false);
+    const [newAttributes, setNewAttributes] = useState<NewInput[]>([]);
+    const [localAttributes, setLocalAttributes] = useState(attributes);
+
+    console.log(localAttributes)
 
     const editProductFormRef = useRef<HTMLFormElement>(null)
     const newAttributeKeyRef = useRef<HTMLInputElement>(null)
@@ -37,10 +43,42 @@ export default function EditProduct({toggle, sku, attributes}:Props){
         setNewAttributes(filteredAttributes);
     }
 
-    function handleSubmit(e:FormEvent){
+    function removeOldAttribute(key:string){
+        const updatedAttributes = localAttributes
+        delete updatedAttributes[key]
+        setLocalAttributes({...updatedAttributes});
+    }
+
+    async function handleSubmit(e:FormEvent){
         e.preventDefault();
         const formData = new FormData(editProductFormRef.current as HTMLFormElement)
-        console.log({formData})
+        const product:Product = {
+            sku:sku,
+            attributes:{}
+        };
+        
+        for (const [key, value] of formData.entries()) {
+            if(key === 'sku'){
+                product["sku"] = value as string
+            }else{
+                product["attributes"][key] = value as string
+            }
+        }
+
+        setLoading(true);
+
+        try{
+            const response = await addProduct(product);
+            console.log(response);
+            useProductContext()?.refresh
+        }catch(error){
+            console.log(error)
+        }finally{
+            setTimeout(() => {
+                setLoading(false);
+                toggle();
+            }, 2000)
+        }
     }
 
     return(
@@ -57,12 +95,12 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                 <hr className="border-white"/>
                 <div className="flex-1 space-y-4">
                     {
-                        Object.entries(attributes).map(([key,value]) => (
-                            <div className="flex gap-4 items-center" key={key}>
+                        Object.entries(localAttributes).map(([key,value]) => (
+                            <div className="grid grid-cols-3 gap-4 items-center" key={key}>
                                 <label className="block" htmlFor={key}>{key}</label>
                                 {
                                     key === "size" ?
-                                        <select data-edit name="" id="" className="rounded px-2 py-1" >
+                                        <select name={key} data-edit id="" className="rounded px-2 py-1" >
                                             <option value="XL">XL</option>
                                             <option value="L">L</option>
                                             <option value="M">M</option>
@@ -70,12 +108,15 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                                         </select>
                                     :    
                                         <input 
+                                            name={key}
                                             data-edit
                                             type="text" 
-                                            placeholder={value} 
+                                            placeholder={value}
+                                            defaultValue={value}
                                             className="rounded px-2 py-1" 
                                             />
                                 }
+                                <button onClick={() => removeOldAttribute(key)} type="button" className="bg-red-500 px-4 rounded">Delete</button>
                             </div>
                         ))
                     }
@@ -90,8 +131,9 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                         <ul>
                             { 
                                 newAttributes.map(attribute => (
-                                    <li className="flex justify-between border-b border-gray-400 py-2" key={attribute.key}>
-                                        <span>{attribute.key}: {attribute.value}</span>
+                                    <li className="grid grid-cols-3 border-b border-gray-400 py-2 gap-2" key={attribute.key}>
+                                        <label htmlFor={attribute.key} className="min-w-10">{attribute.key}</label>
+                                        <input type="text" name={attribute.key} defaultValue={attribute.value} className="rounded px-2 py-1"/>
                                         <button onClick={() => removeNewAttribute(attribute.key)} className="bg-red-500 px-4 rounded">Delete</button>
                                     </li>
                                 )) 
@@ -101,7 +143,7 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                 </div>
                 <div className="flex justify-between w-full">
                     <button onClick={() => toggle()} className="bg-red-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Cancel</button>
-                    <button type="submit" className="bg-green-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Save</button>
+                    <button disabled={loading} type="submit" className="bg-green-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Save</button>
                 </div>
             </form>
         </div>
