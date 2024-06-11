@@ -19,13 +19,17 @@ export default function EditProduct({toggle, sku, attributes}:Props){
     const newAttributeValueRef = useRef<HTMLInputElement>(null)
 
     function addAttribute(){
-        // TODO: Check for duplicate keys before adding attribute
+        if(newAttributes.find(item => item.key === newAttributeKeyRef.current?.value)) return 
         if(newAttributeKeyRef.current?.value === "" || newAttributeValueRef.current?.value === "") return
         const newAttribute: NewInput = {
             key: newAttributeKeyRef.current?.value as string,
             value: newAttributeValueRef.current?.value as string
         }
         setNewAttributes(prevState => [...prevState, newAttribute])
+
+        // TODO: TS issues to be sorted
+        newAttributeKeyRef.current.value = "";
+        newAttributeValueRef.current.value = "";
     }
 
     function removeNewAttribute(key:string){
@@ -35,11 +39,12 @@ export default function EditProduct({toggle, sku, attributes}:Props){
 
     function handleSubmit(e:FormEvent){
         e.preventDefault();
-        console.log(editProductFormRef.current)
+        const formData = new FormData(editProductFormRef.current as HTMLFormElement)
+        console.log({formData})
     }
 
     return(
-        <div onClick={() => toggle()} className="absolute top-0 left-0 w-screen h-screen bg-black/50 flex justify-center items-center">
+        <div onClick={toggle} className="absolute top-0 left-0 w-screen h-screen bg-black/50 flex justify-center items-center">
             <form 
                 onSubmit={handleSubmit}
                 ref={editProductFormRef} 
@@ -81,7 +86,7 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                         <button onClick={addAttribute} className="bg-gray-300 px-10 rounded hover:shadow">Add</button>
                     </div>
                     <div>
-                        <p>New Attributes to be added:</p>
+                        <p>New Attributes:</p>
                         <ul>
                             { 
                                 newAttributes.map(attribute => (
