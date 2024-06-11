@@ -18,7 +18,7 @@ export default function EditProduct({toggle, sku, attributes}:Props){
     const [newAttributes, setNewAttributes] = useState<NewInput[]>([]);
     const [localAttributes, setLocalAttributes] = useState(attributes);
 
-    console.log(localAttributes)
+    const { refresh } = useProductContext()
 
     const editProductFormRef = useRef<HTMLFormElement>(null)
     const newAttributeKeyRef = useRef<HTMLInputElement>(null)
@@ -49,6 +49,11 @@ export default function EditProduct({toggle, sku, attributes}:Props){
         setLocalAttributes({...updatedAttributes});
     }
 
+    function cancel(){
+        refresh();
+        toggle();
+    }
+
     async function handleSubmit(e:FormEvent){
         e.preventDefault();
         const formData = new FormData(editProductFormRef.current as HTMLFormElement)
@@ -68,21 +73,18 @@ export default function EditProduct({toggle, sku, attributes}:Props){
         setLoading(true);
 
         try{
-            const response = await addProduct(product);
-            console.log(response);
-            useProductContext()?.refresh
+            await addProduct(product);
+            refresh()
         }catch(error){
             console.log(error)
         }finally{
-            setTimeout(() => {
-                setLoading(false);
-                toggle();
-            }, 2000)
+            setLoading(false);
+            toggle();
         }
     }
 
     return(
-        <div onClick={toggle} className="absolute top-0 left-0 w-screen h-screen bg-black/50 flex justify-center items-center">
+        <div onClick={cancel} className="absolute top-0 left-0 w-screen h-screen bg-black/50 flex justify-center items-center">
             <form 
                 onSubmit={handleSubmit}
                 ref={editProductFormRef} 
@@ -142,7 +144,7 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                     </div>
                 </div>
                 <div className="flex justify-between w-full">
-                    <button onClick={() => toggle()} className="bg-red-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Cancel</button>
+                    <button type="button" onClick={cancel} className="bg-red-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Cancel</button>
                     <button disabled={loading} type="submit" className="bg-green-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Save</button>
                 </div>
             </form>

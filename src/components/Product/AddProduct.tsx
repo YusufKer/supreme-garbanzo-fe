@@ -21,6 +21,8 @@ export default function AddProduct({toggle}:Props){
     const newAttributeKeyRef = useRef<HTMLInputElement>(null)
     const newAttributeValueRef = useRef<HTMLInputElement>(null)
 
+    const { refresh } = useProductContext();
+
     function addAttribute(){
         if(newAttributes.find(item => item.key === newAttributeKeyRef.current?.value)) return 
         if(newAttributeKeyRef.current?.value === "" || newAttributeValueRef.current?.value === "") return
@@ -59,16 +61,13 @@ export default function AddProduct({toggle}:Props){
         setLoading(true);
 
         try{
-            const response = await addProduct(product);
-            console.log(response);
-            useProductContext()?.refresh
+            await addProduct(product);
+            refresh()
         }catch(error){
             console.log(error)
         }finally{
-            setTimeout(() => {
-                setLoading(false);
-                toggle();
-            }, 2000)
+            setLoading(false);
+            toggle();
         }
     }
 
