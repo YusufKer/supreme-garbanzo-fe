@@ -112,7 +112,7 @@ export default function AddProduct({toggle}:Props){
                         </ul>
                     </div>
                     <div className="flex justify-between w-full">
-                        <button onClick={() => toggle()} className="bg-red-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Cancel</button>
+                        <button type="button" onClick={() => toggle()} className="bg-red-500 px-10 py-2 mt-4 rounded w-min hover:shadow">Cancel</button>
                         <button type="submit" disabled={loading} className="bg-green-500 px-10 py-2 rounded w-fit hover:shadow block ml-auto">Add Product</button>
                     </div>
                 </form>

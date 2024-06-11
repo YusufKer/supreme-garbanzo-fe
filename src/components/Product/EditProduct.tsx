@@ -126,7 +126,7 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                         <label htmlFor="AddAttribute" className="col-span-3">Add Attribute</label>
                         <input ref={newAttributeKeyRef} type="text" placeholder="key" className="rounded px-2 py-1" />
                         <input ref={newAttributeValueRef} type="text" placeholder="value" className="rounded px-2 py-1" />
-                        <button onClick={addAttribute} className="bg-gray-300 px-10 rounded hover:shadow">Add</button>
+                        <button type="button" onClick={addAttribute} className="bg-gray-300 px-10 rounded hover:shadow">Add</button>
                     </div>
                     <div>
                         <p>New Attributes:</p>
@@ -136,7 +136,7 @@ export default function EditProduct({toggle, sku, attributes}:Props){
                                     <li className="grid grid-cols-3 border-b border-gray-400 py-2 gap-2" key={attribute.key}>
                                         <label htmlFor={attribute.key} className="min-w-10">{attribute.key}</label>
                                         <input type="text" name={attribute.key} defaultValue={attribute.value} className="rounded px-2 py-1"/>
-                                        <button onClick={() => removeNewAttribute(attribute.key)} className="bg-red-500 px-4 rounded">Delete</button>
+                                        <button type="button" onClick={() => removeNewAttribute(attribute.key)} className="bg-red-500 px-4 rounded">Delete</button>
                                     </li>
                                 )) 
                             }
