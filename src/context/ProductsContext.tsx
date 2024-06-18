@@ -1,16 +1,16 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 import { Product, fetchAllProducts } from "../api/Products";
 
-type ProductContext = {
+type ProductContextType = {
     products: Product[],
     singleProduct: (sku:string) => Product | undefined,
     refresh: () => void
 }
 
-const ProductContext = createContext<ProductContext | undefined>(undefined)
+const ProductContext = createContext<ProductContextType | undefined>(undefined)
 
-export function useProductContext(){
-    return useContext(ProductContext)
+export function useProductContext():ProductContextType{
+    return useContext(ProductContext) as ProductContextType
 }
 
 export function ProductContextProvider({ children }:{children:ReactNode}){

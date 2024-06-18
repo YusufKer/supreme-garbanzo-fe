@@ -25,7 +25,10 @@ export default function ProductCard({sku, attributes}:Product){
                         { renderAttributes() }
                     </ul>
                 </div>
-                <button onClick={() => setOpenEditor(true)} className="bg-yellow-300 px-10 py-2 mt-4 rounded w-min self-end hover:shadow">Edit</button>
+                <button 
+                    onClick={() => setOpenEditor(true)} 
+                    className="bg-yellow-300 px-10 py-2 mt-4 rounded w-min self-end hover:shadow"
+                >Edit</button>
             </div>
             {
                 openEditor ? 
@@ -33,8 +36,9 @@ export default function ProductCard({sku, attributes}:Product){
                         toggle={() => setOpenEditor(prevState => !prevState)} 
                         sku={sku} 
                         attributes={attributes}
-                        /> 
-                    : null
+                    /> 
+                :
+                    null
             }
             
         </>

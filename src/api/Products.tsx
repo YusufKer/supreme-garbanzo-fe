@@ -14,11 +14,9 @@ export async function fetchAllProducts():Promise<Product[]>{
     }
 }
 
-// UNFINISHED
-
 export async function addProduct(product:Product){
     try{
-
+        
         const response = await fetch(`http://127.0.0.1:5000/products/${product.sku}`,{
             method: "POST",
             headers: {
@@ -28,7 +26,7 @@ export async function addProduct(product:Product){
         })
 
         return await response.json()
-        
+
     } catch(error){
         return error
     }
