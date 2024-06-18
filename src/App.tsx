@@ -7,7 +7,7 @@ import AddProduct from './components/Product/AddProduct'
 
 function App() {
 
-  const [openAddProductForm, setOpenAddProductForm] = useState(true);
+  const [openAddProductForm, setOpenAddProductForm] = useState(false);
 
   const { products } = useProductContext();
 
